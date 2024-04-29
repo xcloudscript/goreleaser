@@ -68,8 +68,10 @@ go 1.22
 
 func createGoReleaserYaml(tb testing.TB) {
 	tb.Helper()
-	yaml := `build:
-  binary: fake
+	yaml := `
+version: 2
+builds:
+- binary: fake
   goos:
     - linux
   goarch:

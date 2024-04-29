@@ -21,7 +21,7 @@ func TestReleaseAutoSnapshot(t *testing.T) {
 	t.Run("clean", func(t *testing.T) {
 		setup(t)
 		cmd := newReleaseCmd()
-		cmd.cmd.SetArgs([]string{"--auto-snapshot", "--skip-publish"})
+		cmd.cmd.SetArgs([]string{"--auto-snapshot", "--skip=publish"})
 		require.NoError(t, cmd.cmd.Execute())
 		require.FileExists(t, "dist/fake_0.0.2_checksums.txt", "should have created checksums when run with --snapshot")
 	})
@@ -30,7 +30,7 @@ func TestReleaseAutoSnapshot(t *testing.T) {
 		setup(t)
 		createFile(t, "foo", "force dirty tree")
 		cmd := newReleaseCmd()
-		cmd.cmd.SetArgs([]string{"--auto-snapshot", "--skip-publish"})
+		cmd.cmd.SetArgs([]string{"--auto-snapshot", "--skip=publish"})
 		require.NoError(t, cmd.cmd.Execute())
 		matches, err := filepath.Glob("./dist/fake_0.0.2-SNAPSHOT-*_checksums.txt")
 		require.NoError(t, err)
@@ -40,10 +40,10 @@ func TestReleaseAutoSnapshot(t *testing.T) {
 
 func TestReleaseInvalidConfig(t *testing.T) {
 	setup(t)
-	createFile(t, "goreleaser.yml", "foo: bar")
+	createFile(t, "goreleaser.yml", "version: 2\nfoo: bar")
 	cmd := newReleaseCmd()
 	cmd.cmd.SetArgs([]string{"--snapshot", "--timeout=1m", "--parallelism=2", "--deprecated"})
-	require.EqualError(t, cmd.cmd.Execute(), "yaml: unmarshal errors:\n  line 1: field foo not found in type config.Project")
+	require.EqualError(t, cmd.cmd.Execute(), "yaml: unmarshal errors:\n  line 2: field foo not found in type config.Project")
 }
 
 func TestReleaseBrokenProject(t *testing.T) {
