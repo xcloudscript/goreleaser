@@ -57,6 +57,7 @@ brews:
 
 	t.Run("mixed", func(t *testing.T) {
 		conf := `
+version: 2
 brews:
 - name: foo
   dependencies:
@@ -67,6 +68,6 @@ brews:
 		buf := strings.NewReader(conf)
 		_, err := LoadReader(buf)
 
-		require.EqualError(t, err, "yaml: unmarshal errors:\n  line 6: field namer not found in type config.homebrewDependency")
+		require.EqualError(t, err, "yaml: unmarshal errors:\n  line 7: field namer not found in type config.homebrewDependency")
 	})
 }

@@ -60,12 +60,12 @@ func TestFileNotFound(t *testing.T) {
 
 func TestInvalidFields(t *testing.T) {
 	_, err := Load("testdata/invalid_config.yml")
-	require.EqualError(t, err, "yaml: unmarshal errors:\n  line 2: field invalid_yaml not found in type config.Build")
+	require.EqualError(t, err, "yaml: unmarshal errors:\n  line 3: field invalid_yaml not found in type config.Build")
 }
 
 func TestInvalidYaml(t *testing.T) {
 	_, err := Load("testdata/invalid.yml")
-	require.EqualError(t, err, "yaml: line 1: did not find expected node content")
+	require.EqualError(t, err, "yaml: line 2: did not find expected node content")
 }
 
 func TestConfigWithAnchors(t *testing.T) {
@@ -86,9 +86,13 @@ func TestVersion(t *testing.T) {
 		_, err := LoadReader(strings.NewReader("version: 1"))
 		require.NoError(t, err)
 	})
-	t.Run("do not allow v2", func(t *testing.T) {
+	t.Run("allow v2", func(t *testing.T) {
 		_, err := LoadReader(strings.NewReader("version: 2"))
+		require.NoError(t, err)
+	})
+	t.Run("do not allow v3", func(t *testing.T) {
+		_, err := LoadReader(strings.NewReader("version: 3\nnope: 1"))
 		require.Error(t, err)
-		require.ErrorIs(t, err, VersionError{2})
+		require.ErrorIs(t, err, VersionError{3})
 	})
 }
